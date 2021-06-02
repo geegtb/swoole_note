@@ -1,32 +1,34 @@
-English | [中文](./README-CN.md)
+[English](./README.md) | 中文
 
-<h1>
-<img width="200" height="120" align=center alt="Swoole Logo" src="https://www.swoole.co.uk/images/swoole-logo.svg" />
-</h1>
+# Swoole
 
+[![Latest Version](https://img.shields.io/github/release/swoole/swoole-src.svg)](https://github.com/swoole/swoole-src/releases)
+[![License](https://img.shields.io/badge/license-apache2-blue.svg)](LICENSE)
 [![lib-swoole](https://github.com/swoole/swoole-src/workflows/lib-swoole/badge.svg)](https://github.com/swoole/swoole-src/actions?query=workflow%3Alib-swoole)
 [![ext-swoole](https://github.com/swoole/swoole-src/workflows/ext-swoole/badge.svg)](https://github.com/swoole/swoole-src/actions?query=workflow%3Aext-swoole)
 [![test-linux](https://github.com/swoole/swoole-src/workflows/test-linux/badge.svg)](https://github.com/swoole/swoole-src/actions?query=workflow%3Atest-linux)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/11654/badge.svg)](https://scan.coverity.com/projects/swoole-swoole-src)
 [![codecov](https://codecov.io/gh/swoole/swoole-src/branch/master/graph/badge.svg)](https://codecov.io/gh/swoole/swoole-src)
 
-**Swoole is an event-driven asynchronous & coroutine-based concurrency networking communication engine with high performance written in C++ for PHP.**
+![](./mascot.png)
 
-## ✨Event-based
+**Swoole是一个C++编写的基于异步事件驱动和协程的并行网络通信引擎，为PHP提供高性能网络编程支持**
 
-The network layer in Swoole is event-based and takes full advantage of the underlying epoll/kqueue implementation, making it really easy to serve millions of requests.
+## ✨事件驱动
 
-Swoole 4.x uses a brand new engine kernel and now it has a full-time developer team, so we are entering an unprecedented period in PHP history which offers a unique possibility for rapid evolution in performance.
+Swoole中的网络请求处理是基于事件的，并且充分利用了底层的epoll / kqueue实现，使得为数百万个请求提供服务变得非常容易。
 
-## ⚡️Coroutine
+Swoole4使用全新的协程内核引擎，现在它拥有一个全职的开发团队，因此我们正在进入PHP历史上前所未有的时期，为性能的高速提升提供了独一无二的可能性。
 
-Swoole 4.x or later supports the built-in coroutine with high availability, and you can use fully synchronized code to implement asynchronous performance. PHP code without any additional keywords, the underlying automatic coroutine-scheduling.
+## ⚡️协程
 
-Developers can understand coroutines as ultra-lightweight threads, and you can easily create thousands of coroutines in a single process.
+Swoole4或更高版本拥有高可用性的内置协程，您可以使用完全同步的代码来实现异步性能，PHP代码没有任何额外的关键字，底层会自动进行协程调度。
 
-### MySQL
+开发者可以将协程理解为超轻量级的线程, 你可以非常容易地在一个进程中创建成千上万个协程。
 
-Concurrency 10K requests to read data from MySQL takes only 0.2s!
+### MySQL客户端
+
+并发1万个请求从MySQL读取海量数据仅需要0.2秒
 
 ```php
 $s = microtime(true);
@@ -51,9 +53,9 @@ Co\run(function() {
 echo 'use ' . (microtime(true) - $s) . ' s';
 ```
 
-### Mixed server
+### 混合服务器
 
-You can create multiple services on the single event loop: TCP, HTTP, Websocket and HTTP2, and easily handle thousands of requests.
+你可以在一个事件循环上创建多个服务：TCP，HTTP，Websocket和HTTP2，并且能轻松承载上万请求。
 
 ```php
 function tcp_pack(string $data): string
@@ -91,10 +93,9 @@ $tcp_server->on('receive', function (Swoole\Server $server, int $fd, int $reacto
 });
 $server->start();
 ```
+### 多种客户端
 
-### Coroutine clients
-
-Whether you DNS query or send requests or receive responses, all of these are scheduled by coroutine automatically.
+不管是DNS查询抑或是发送请求和接收响应，都是协程调度的，不会产生任何阻塞。
 
 ```php
 go(function () {
@@ -128,15 +129,15 @@ go(function () use ($tcp_options) {
 });
 ```
 
-### Channel
+### 通道
 
-Channel is the only way for exchanging data between coroutines, the development combination of the `Coroutine + Channel` is the famous CSP programming model.
+通道(Channel)是协程之间通信交换数据的唯一渠道, 而协程+通道的开发组合即为著名的CSP编程模型。
 
-In Swoole development, Channel is usually used for implementing connection pool or scheduling coroutine concurrent.
+在Swoole开发中，Channel常用于连接池的实现和协程并发的调度。
 
-#### The simplest example of a connection pool
+#### 连接池最简示例
 
-In the following example, we have a thousand concurrently requests to redis. Normally, this has exceeded the maximum number of Redis connections setting and will throw a connection exception, but the connection pool based on Channel can perfectly schedule requests. We don't have to worry about connection overload.
+在以下示例中，我们并发了一千个redis请求，通常的情况下，这已经超过了Redis最大的连接数，将会抛出连接异常， 但基于Channel实现的连接池可以完美地调度请求，开发者就无需担心连接过载。
 
 ```php
 class RedisPool
@@ -197,9 +198,9 @@ go(function () {
 });
 ```
 
-#### Producer and consumers
+#### 生产和消费
 
-Some Swoole's clients implement the defer mode for concurrency, but you can still implement it flexible with a combination of coroutines and channels.
+Swoole的部分客户端实现了defer机制来进行并发，但你依然可以用协程和通道的组合来灵活地实现它。
 
 ```php
 go(function () {
@@ -228,7 +229,7 @@ go(function () {
 });
 ```
 
-### Timer
+### 定时器
 
 ```php
 $id = Swoole\Timer::tick(100, function () {
@@ -244,7 +245,8 @@ Swoole\Timer::after(1000, function () use ($id) {
     }
 });
 ```
-#### The way of coroutine
+
+#### 使用协程方式
 
 ```php
 go(function () {
@@ -261,11 +263,19 @@ go(function () {
 });
 ```
 
-## 🔥 Amazing runtime hooks
+### 命名空间
 
-**As of Swoole v4.1.0, we added the ability to transform synchronous PHP network libraries into co-routine libraries using a single line of code.**
+Swoole提供了多种类命名规则以满足不同开发者的爱好
 
-Simply call the `Swoole\Runtime::enableCoroutine()` method at the top of your script. In the sample below we connect to php-redis and concurrently read 10k requests in 0.1s:
+1. 符合PSR规范的命名空间风格
+2. 便于键入的下划线风格
+3. 协程类短名风格
+
+## 🔥 强大的运行时钩子
+
+在最新版本的Swoole中，我们添加了一项新功能，使PHP原生的同步网络库一键化成为协程库。
+
+只需在脚本顶部调用`Swoole\Runtime::enableCoroutine()`方法并使用`php-redis`，并发1万个请求从Redis读取数据仅需0.1秒！
 
 ```php
 Swoole\Runtime::enableCoroutine();
@@ -283,13 +293,11 @@ Co\run(function() {
 echo 'use ' . (microtime(true) - $s) . ' s';
 ```
 
-By calling this method, the Swoole kernel replaces ZendVM stream function pointers. If you use `php_stream` based extensions, all socket operations can be dynamically converted to be asynchronous IO scheduled by coroutine at runtime!
+调用它之后，Swoole内核将替换ZendVM中的Stream函数指针，如果使用基于`php_stream`的扩展，则所有套接字操作都可以在运行时动态转换为协程调度的异步IO。
 
-### How many things you can do in 1s?
+### 你可以在一秒钟里做多少事?
 
-Sleep 10K times, read, write, check and delete files 10K times, use PDO and MySQLi to communicate with the database 10K times, create a TCP server and multiple clients to communicate with each other 10K times, create a UDP server and multiple clients to communicate with each other 10K times... Everything works well in one process!
-
-Just see what the Swoole brings, just imagine...
+睡眠1万次，读取，写入，检查和删除文件1万次，使用PDO和MySQLi与数据库通信1万次，创建TCP服务器和多个客户端相互通信1万次，创建UDP服务器和多个客户端相互通信1万次......一切都在一个进程中完美完成！
 
 ```php
 Swoole\Runtime::enableCoroutine();
@@ -304,7 +312,7 @@ Co\run(function() {
         });
     }
 
-    // 10K file read and write
+    // 10k file read and write
     for ($c = 100; $c--;) {
         go(function () use ($c) {
             $tmp_filename = "/tmp/test-{$c}.php";
@@ -317,7 +325,7 @@ Co\run(function() {
         });
     }
 
-    // 10K pdo and mysqli read
+    // 10k pdo and mysqli read
     for ($c = 50; $c--;) {
         go(function () {
             $pdo = new PDO('mysql:host=127.0.0.1;dbname=test;charset=utf8', 'root', 'root');
@@ -341,7 +349,7 @@ Co\run(function() {
         });
     }
 
-    // php_stream tcp server & client with 12.8K requests in single process
+    // php_stream tcp server & client with 12.8k requests in single process
     function tcp_pack(string $data): string
     {
         return pack('n', strlen($data)) . $data;
@@ -393,7 +401,7 @@ Co\run(function() {
         });
     }
 
-    // udp server & client with 12.8K requests in single process
+    // udp server & client with 12.8k requests in single process
     go(function () {
         $socket = new Swoole\Coroutine\Socket(AF_INET, SOCK_DGRAM, 0);
         $socket->bind('127.0.0.1', 9503);
@@ -430,124 +438,100 @@ Co\run(function() {
 echo 'use ' . (microtime(true) - $s) . ' s';
 ```
 
-## ⌛️ Installation
+## ⌛️ 安装
 
-> As with any open source project, Swoole always provides the most reliable stability and the most powerful features in **the latest released version**. Please ensure as much as possible that you are using the latest version.
+> 和任何开源项目一样, Swoole总是在**最新的发行版**提供最可靠的稳定性和最强的功能, 请尽量保证你使用的是最新版本
 
-### Compiling requirements
+### 编译需求
 
-+ Linux, OS X or Cygwin, WSL
-+ PHP 7.2.0 or later (The higher the version, the better the performance.)
-+ GCC 4.8 or later
++ Linux, OS X 系统 或 CygWin, WSL
++ PHP 7.2.0 或以上版本 (版本越高性能越好)
++ GCC 4.8 及以上
 
-### 1. Install via PECL (beginners)
+### 1. 使用PHP官方的PECL工具安装 (初学者)
 
 ```shell
 pecl install swoole
 ```
 
-### 2. Install from source (recommended)
+### 2. 从源码编译安装 (推荐)
 
-Please download the source packages from [Releases](https://github.com/swoole/swoole-src/releases) or:
-
-```shell
-git clone https://github.com/swoole/swoole-src.git && \
-cd swoole-src
-```
-
-Compile and install at the source folder:
+> 非内核开发研究之用途, 请下载[发布版本](https://github.com/swoole/swoole-src/releases)的源码编译
 
 ```shell
+cd swoole-src && \
 phpize && \
 ./configure && \
-make && make install
+make && sudo make install
 ```
 
-#### Enable extension in PHP
+#### 启用扩展
 
-After compiling and installing to the system successfully, you have to add a new line `extension=swoole.so` to `php.ini` to enable Swoole extension.
+编译安装到系统成功后, 需要在`php.ini`中加入一行`extension=swoole.so`来启用Swoole扩展
 
-#### Extra compiler configurations
+#### 额外编译参数
 
-> for example: `./configure --enable-openssl --enable-sockets`
+> 使用例子: `./configure --enable-openssl --enable-sockets`
 
-+ `--enable-openssl` or `--with-openssl-dir=DIR`
++ `--enable-openssl` 或 `--with-openssl-dir=DIR`
 + `--enable-sockets`
 + `--enable-http2`
-+ `--enable-mysqlnd` (need mysqlnd, it just for supporting `$mysql->escape` method)
++ `--enable-mysqlnd` (需要 mysqlnd, 只是为了支持`mysql->escape`方法)
 + `--enable-swoole-json`
 + `--enable-swoole-curl`
 
-### Upgrade
+### 升级
 
->  ⚠️ If you upgrade from source, don't forget to `make clean` before you upgrade your swoole
+>  ⚠️ 如果你要从源码升级, 别忘记在源码目录执行 `make clean`
 
 1. `pecl upgrade swoole`
 2. `cd swoole-src && git pull && make clean && make && sudo make install`
-3. if you change your PHP version, please re-run `phpize clean && phpize` then try to compile
+3. 如果你改变了PHP版本, 请重新执行 `phpize clean && phpize`后重新编译
 
-### Major change since version 4.3.0
+## 💎 框架 & 组件
 
-Async clients and API are moved to a separate PHP extension `swoole_async` since version 4.3.0, install `swoole_async`:
++ [**Hyperf**](https://github.com/hyperf/hyperf) 是一个高性能、高灵活性的协程框架，存在丰富的可能性，如实现分布式中间件，微服务架构等
++ [**Swoft**](https://github.com/swoft-cloud) 是一个现代化的面向切面的高性能协程全栈组件化框架
++ [**Easyswoole**](https://www.easyswoole.com) 是一个极简的高性能的框架，让代码开发就好像写`echo "hello world"`一样简单
++ [**MixPHP**](https://github.com/mix-php/mix) 是一个功能强大的单线程协程框架，轻量、简单而优雅
++ [**imi**](https://github.com/Yurunsoft/imi) 是基于 PHP Swoole 的高性能协程应用开发框架，它支持 HttpApi、WebSocket、TCP、UDP 服务的开发。
++ [**Saber**](https://github.com/swlib/saber) 是一个人性化的高性能HTTP客户端组件，几乎拥有一切你可以想象的强大功能
++ [**One**](https://github.com/lizhichao/one) 是一个极简高性能php框架，支持[swoole | php-fpm ]环境
 
-```shell
-git clone https://github.com/swoole/ext-async.git
-cd ext-async
-phpize
-./configure
-make -j 4
-sudo make install
-```
-
-Enable it by adding a new line `extension=swoole_async.so` to `php.ini`.
-
-## 💎 Frameworks & Components
-+ [**Hyperf**](https://github.com/hyperf/hyperf) is a coroutine framework that focuses on hyperspeed and flexibility, specifically used for build microservices or middlewares.
-+ [**Swoft**](https://github.com/swoft-cloud/swoft) is a modern, high-performance AOP and coroutine PHP framework.
-+ [**Easyswoole**](https://www.easyswoole.com) is a simple, high-performance PHP framework, based on Swoole, which makes using Swoole as easy as `echo "hello world"`.
-+ [**MixPHP**](https://github.com/mix-php/mix) is a powerful single-threaded coroutine framework with a very small footprint, simple and elegant.
-+ [**imi**](https://github.com/Yurunsoft/imi) is a high-performance coroutine application development framework based on PHP Swoole, which supports the development of HttpApi, WebSocket, TCP, UDP services.
-+ [**Saber**](https://github.com/swlib/saber) is a human-friendly, high-performance HTTP client component that has almost everything you can imagine.
-+ [**One**](https://github.com/lizhichao/one) is a minimalist, high-performance PHP framework that supports the [swoole | php-fpm] environment
-
-## 🛠 Develop & Discussion
+## 🛠 开发 & 讨论
 
 + __中文文档__: <https://wiki.swoole.com>
-+ __Documentation__: <https://www.swoole.co.uk/docs>
++ __Document__: <https://www.swoole.co.uk/docs>
 + __IDE Helper & API__: <https://github.com/swoole/ide-helper>
-+ __Debug Tool__: <https://github.com/swoole/yasd>
-+ __中文社区__: <https://wiki.swoole.com/#/other/discussion>
++ __调试工具__: <https://github.com/swoole/yasd>
++ __中文社区及QQ群__: <https://wiki.swoole.com/#/other/discussion>
 + __Twitter__: <https://twitter.com/php_swoole>
 + __Slack Group__: <https://swoole.slack.com>
 
-## 🍭 Benchmark
+## 🍭 性能测试
 
-+ On the open source [Techempower Web Framework benchmarks](https://www.techempower.com/benchmarks/#section=data-r17) Swoole used MySQL database benchmark to rank first, and all performance tests ranked in the first echelon.
-+ You can just run [Benchmark Script](https://github.com/swoole/benchmark/blob/master/benchmark.php) to quickly test the maximum QPS of Swoole-HTTP-Server on your machine.
++ 在开源的 [Techempower Web Framework benchmarks](https://www.techempower.com/benchmarks/#section=data-r17) 压测平台上，Swoole使用MySQL数据库压测的成绩一度位居首位， 所有IO性能测试都位列第一梯队。
++ 你可以直接运行 [Benchmark Script](https://github.com/swoole/benchmark/blob/master/benchmark.php) 来快速地测试出Swoole提供的Http服务在你的机器上所能达到的最大QPS
 
-## 🔰️ Security issues
+## 🔰️ 安全问题
 
-Security issues should be reported privately, via email, to the Swoole develop team [team@swoole.com](mailto:team@swoole.com). You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message.
+安全问题应通过电子邮件私下报告给Swoole开发团队[team@swoole.com](mailto:team@swoole.com)。您将会在24小时内收到回复，若由于某些原因您没有收到回复，请再次通过电子邮件跟进以确保我们收到了您的原始消息。
 
-## 🖊️ Contribution
+## 🖊️ 如何贡献
 
-Your contribution to Swoole development is very welcome!
+非常欢迎您对Swoole的开发作出贡献！
 
-You may contribute in the following ways:
+你可以选择以下方式向Swoole贡献：
 
-* [Report issues and feedback](https://github.com/swoole/swoole-src/issues)
-* Submit fixes, features via Pull Request
-* Write/polish documentation
++ [发布issue进行问题反馈和建议](https://github.com/swoole/swoole-src/issues)
++ 通过Pull Request提交修复
++ 完善我们的文档和例子
 
-## ❤️ Contributors
+## ❤️ 贡献者
 
-This project exists thanks to all the people who contribute. [[Contributors](https://github.com/swoole/swoole-src/graphs/contributors)].
+项目的发展离不开以下贡献者的努力! [[Contributor](https://github.com/swoole/swoole-src/graphs/contributors)].
 <a href="https://github.com/swoole/swoole-src/graphs/contributors"><img src="https://opencollective.com/swoole-src/contributors.svg?width=890&button=false" /></a>
 
-## 🎙️ Official Evangelist
-
-[Demin](https://deminy.in) has been playing with PHP since 2000, focusing on building high-performance, secure web services. He is an occasional conference speaker on PHP and Swoole, and has been working for companies in the states like eBay, Visa and Glu Mobile for years. You may find Demin on [Twitter](https://twitter.com/deminy) or [GitHub](https://github.com/deminy).
-
-## 📃 License
+## 📃 开源协议
 
 Apache License Version 2.0 see http://www.apache.org/licenses/LICENSE-2.0.html
